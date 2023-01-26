@@ -19,7 +19,12 @@ export default {
 
             this.newText = "";
 
-            this.todoList.push(newTodo);
+            if (this.filtered) {
+                this.oldTodoList.push(newTodo);
+                this.todoList.push(newTodo);
+            } else {
+                this.todoList.push(newTodo);
+            }
         },
         toggleDone(id) {
             this.todoList.map((todo) => (todo.id === id ? (todo.isDone = !todo.isDone) : undefined));
