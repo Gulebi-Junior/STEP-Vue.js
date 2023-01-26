@@ -2,8 +2,10 @@
 export default {
     data() {
         return {
+            oldTodoList: [],
             todoList: [],
             newText: "",
+            filtered: false,
         };
     },
     methods: {
@@ -22,6 +24,19 @@ export default {
         toggleDone(id) {
             this.todoList.map((todo) => (todo.id === id ? (todo.isDone = !todo.isDone) : undefined));
         },
+        deleteTodo(id) {
+            this.todoList = this.todoList.filter((todo) => todo.id != id);
+        },
+        hideDone() {
+            if (!this.filtered) {
+                this.filtered = true;
+                this.oldTodoList = this.todoList;
+                this.todoList = this.todoList.filter((todo) => !todo.isDone);
+            } else {
+                this.filtered = false;
+                this.todoList = this.oldTodoList;
+            }
+        },
     },
 };
 </script>
@@ -32,6 +47,9 @@ export default {
             <div id="add-block">
                 <input type="text" v-model="newText" placeholder="Enter Todo" />
                 <button @click="addNewTodo()">Add</button>
+            </div>
+            <div id="filter-block">
+                <button @click="hideDone()">{{ !filtered ? "Hide" : "Show" }} Completed</button>
             </div>
             <ul id="list">
                 <li v-for="todo in todoList" :key="todo.id" class="list-item">
@@ -45,6 +63,7 @@ export default {
                     <button :disabled="todo.isDone" @click="todo.isEditing = !todo.isEditing">
                         {{ !todo.isEditing ? "Change" : "Save" }}
                     </button>
+                    <button @click="deleteTodo(todo.id)" class="delete-btn">Delete</button>
                 </li>
             </ul>
         </div>
@@ -65,7 +84,14 @@ export default {
 
 #add-block {
     display: flex;
+    justify-content: center;
     gap: 5px;
+    margin-bottom: 7px;
+}
+
+#filter-block {
+    display: flex;
+    justify-content: center;
 }
 
 #list {
@@ -85,5 +111,9 @@ export default {
 
 .done {
     text-decoration: line-through;
+}
+
+.delete-btn {
+    margin-left: 5px;
 }
 </style>
